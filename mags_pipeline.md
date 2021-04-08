@@ -1,10 +1,47 @@
+---
+title: "Creating MAGs"
+objectives:
+- ""
+- ""
+- ""
+keypoints:
+- ""
+- ""
+---
+
+ <a href="{{ page.root }}/fig/bioinformatic workflow.png">
+  <img src="{{ page.root }}/fig/bioinformatic workflow.png" alt="Cog Metagenome" />
+</a>
+
+|Line|Description|
+|----|-----------|
+|1|Always begins with '@' and then information about the read|
+|2|The actual DNA sequence|
+|3|Always begins with a '+' and sometimes the same info in line 1|
+|4|Has a string of characters which represent the quality scores; must have same number of characters as line 2|
+
+~~~
+
+~~~
+{: .bash}
+
+> ## Important notes
+>
+> 
+{: .callout}
+
+<span style="color:blue">some *blue* text</span>.
+
+
 
 ## "Pipelines for binning a single sample with VAMB and performig CheckM on its resulting bins"
 #Copy the code for each of the 3 scpripts in different files and run them where it corresponds (minimap and checkm in mazorka, vamb in local computer)
 
-
+~~~
 #!/bin/bash
 #Script to be run in mazorka, it is to make the script to run minimap on one sample
+
+<span style="color:blue">some *blue* text</span>.
 
 FILE1=$1 #This one will be the metagenome scaffolds fasta file
 FILE2=$2 #This one will be the raw forward reads, it can be compressed.gz
@@ -30,12 +67,17 @@ samtools view -S -b $prefix.sam > $prefix.bam
 rm $prefix.sam
 
 E0F
-
+~~~
+{: .code}
 
 #once you run it run:
 #qsub runMinimap${prefix}.sh 
-#mv runMinimap${prefix}.sh LOGS_MAGS
+~~~
+mv runMinimap${prefix}.sh LOGS_MAGS
 
+<span style="color:blue">some *blue* text</span>.
+~~~
+{: .code}
 ## The next script is to be run in the local computer once you have the bam file in mazorka ready, it moves the bam files to our local computer and runs vamb 
 
 #!/bin/bash
