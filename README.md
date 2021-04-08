@@ -1,4 +1,4 @@
-# Obtaining MAGs (Metagenome-Assembled-Genomes) from shotgun metagenomic sequencing data
+# Obtaining MAGs (Metagenome-Assembled Genomes) from shotgun metagenomic sequencing data
 This repository contains a pipeline to obtain Metagenome-Assembled-Genomes(MAGs) from shotgun metagenomic sequencing data.
 You will need:
   1. Access to a high-performance computing cluster.
@@ -14,29 +14,29 @@ The *mags_pipeline.sh* file contains a collection of scripts to be run in the cl
 
 
 ### Software that must be installed in the cluster
-*The numbers show the version I used, if you use a different version make sure it is compatible with the rest of the pipeline* 
+*The numbers show the version I used, if you use a different version make sure it is compatible with the rest of the pipeline.* 
 
-[SPAdes]() 3.10.1
+[SPAdes](https://github.com/ablab/spades) 3.10.1
 
-[kraken]() 2.0.7
+[kraken](https://github.com/DerrickWood/kraken2) 2.0.7
 
-[Braken]() 2.0
+[Braken](https://github.com/jenniferlu717/Bracken) 2.0
 
-[bowtie2]() 2.3.5.1
+[bowtie2](https://github.com/BenLangmead/bowtie2) 2.3.5.1
 
-[samtools]() 1.9
+[samtools](https://github.com/samtools/samtools) 1.9
 
-[bwa]() 0.7.15
+[bwa](https://github.com/lh3/bwa) 0.7.15
 
-[bamtools]() 2.4.1
+[bamtools](https://github.com/pezmaster31/bamtools) 2.4.1
 
-[minimap2]() 2.12
+[minimap2](https://github.com/lh3/minimap2) 2.12
 
-[CheckM]() 1.1.3
+[CheckM](https://github.com/Ecogenomics/CheckM) 1.1.3
 
-[hmmer]() 3.1b2
+[hmmer](https://github.com/EddyRivasLab/hmmer) 3.1b2
 
-[Prodigal]() 2.6.2
+[Prodigal](https://github.com/hyattpd/Prodigal) 2.6.2
 
 
 ### Software that must be installed in the local computer 
