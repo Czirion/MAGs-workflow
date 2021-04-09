@@ -1,6 +1,6 @@
 
 ## Instructions to use the pipeline
-Here you will find scripts that you will use to create the scripts adapted to your sample data. You have to run these scripts puting certain arguments in the command line in order (each scripts tells you what arguments). The output will be a script with the information of your sample ready to be run by the cluster. The scripts are meant to be run in order along with other commands.
+Here you will find scripts that you can use to create scripts adapted to your sample data. You have to run these scripts putting certain arguments in the command line in order (each scripts tells you what arguments). The output will be a script with the information of your sample ready to be run by the cluster. The scripts are meant to be run in order along with other commands.
 
 
 # Script to run metaSPAdes (in the cluster)
@@ -56,7 +56,7 @@ FILE3=$3 # Reverse reads, a fastq.gz file
 prefix=$4 # Sample ID, it will be appended to the beginning of the files
 root=$(pwd) 
 
-cat > runMinimap$_{prefix}.sh <<E0F
+cat > runMinimap_${prefix}.sh <<E0F
 
 #PBS -N minimap_${prefix}
 #PBS -q default
@@ -181,7 +181,7 @@ cat > runCheckm_${prefix}.sh << E0F
 #PBS -N runCheckm_${prefix}
 #PBS -q default
 #PBS -l nodes=1:ppn=8,mem=48g,vmem=48g,walltime=100:00:00
-#PBS -e $root/LOGS_MAGS/checkm_${prefix}.error
+#PBS -e $root/LOGS/checkm_${prefix}.error
 #PBS -o $root/CHECKM/checkm_${prefix}.output
 #PBS -V
 
