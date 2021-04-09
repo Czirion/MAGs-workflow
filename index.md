@@ -1,14 +1,6 @@
----
-title: "Creating MAGs"
-objectives:
-- "Assemble a metagenome with metaSPAdes"
-- "Bin the contigs of your metagenome"
-- "Reassemble the reads from each bin to create the MAGs"
-- "Check the completeness and contamination of your MAGs"
----
 
-> ## Important notes
-> The scripts are a template to create a script addapted to your sample. You have to run this scripts puting certain arguments in the command line in order (each scripts tells you what arguments). The output will be a script with the information of your sample ready to be run by the cluster (`qsub runScript_mysample.sh`). 
+## Instructions to use the pipeline
+Here you will find scripts that you will use to create the scripts adapted to your sample data. You have to run these scripts puting certain arguments in the command line in order (each scripts tells you what arguments). The output will be a script with the information of your sample ready to be run by the cluster. The scripts are meant to be run in order along with other commands.
 
 
 # Script to run metaSPAdes (in the cluster)
