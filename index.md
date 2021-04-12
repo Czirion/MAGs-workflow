@@ -1,11 +1,11 @@
 
 ## Instructions to use the pipeline
-The script you will find here what it does is create several scripts adapted to the information of your sample (you should run it several times if you have more than one sample). You will also find the instructions of the order in which you should run the created scripts and additional steps. 
+What the script you will find here does is to create several scripts adapted to the information of your sample (you should run it several times if you have more than one sample). You will also find the instructions of the order in which you should run the created scripts and additional steps. 
 Unfortunately VAMB is not able to run in the cluster that I used, so the pipeline is not as automatic as it could be, and you will need to run VAMB in your local computer. This involves to wait for some heavy files to copy from the cluster to your computer. 
 
 # Script
 You should have a folder for each of your samples with the files of your forward and reverse reads in a gzip-compressed format.
-The folder of the sample you are working with will be you working directory, in there you will create the script: 
+The folder of the sample you are working with will be your working directory, in there you will create the script: 
 ```bash
 nano mags_pipeline.sh 
 ```
@@ -15,8 +15,7 @@ And paste inside it the following code:
 FILE1=$1 # Forward reads, a fastq.gz file
 FILE2=$2 # Reverse reads, a fastq.gz file
 prefix=$3 # Sample ID, it will be appended to the beginning of the files
-root=$(pwd) # Your working directory must be the one where you have the required
- files and you want the output folders to be created  
+root=$(pwd) # Your working directory must be the one where you have the required files and wherer the outputs will be created  
 sign='$'
 
 cat > runMetaspades_${prefix}.sh <<EOF
@@ -147,8 +146,38 @@ This script will run the assembly of the metagenome (the output will be in the `
 ```bash
 qsub runMetaspades_sample01.sh
 ```
-The output should look like this:
+Now ypu should have all of this in your sample folder:
 ```bash
+LOGS/
+    metaspades_sample01.output
+    metaspades_sample01.error
+mags_pipeline.sh
+METASPADES/
+    assembly_graph.fastg
+    assembly_graph.gfa
+    before_rr.fasta
+    contigs.fasta
+    contigs.paths
+    corrected/
+    dataset.info
+    first_pe_contigs.fasta
+    input_dataset.yaml
+    K21/
+    K33/
+    K55/
+    misc/
+    params.txt
+    scaffolds.fasta
+    scaffolds.paths
+    spades.log
+    tmp/
+runCheckm_sample01.sh
+runMetaspades_sample01.sh
+runMinimap_sample01.sh
+runReassembly_sample01.sh
+sample01_R1.fastq.gz
+sample01_R2.fastq.gz
+sample01_scaffolds.fasta
 
 ```
 # Running minimap2
@@ -165,11 +194,11 @@ Once you have the BAM and the scaffolds in your local computer run:
 vamb --outdir sample01/ --fasta sample01_scaffolds.fasta --bamfiles sample01.bam --minfasta 200000
 ```
 It will take a while.
-Your bins will be in `sample01/bins/` and will have names like this: `4657.fna`, `15777.fna`
+Your bins will be in `sample01/bins/` and will have names like this: `171479.fna`, `171530.fna`
 Now create a folder called `VAMB/` in your working directory in the cluster and copy your bins there (the `fna` files, not the `bins/` folder)
 
 # Extracting the reads for each bin, reassembling them and performing a taxonomic assignation
-This script will use bowtie2, samtools and bamtools to map the reads (corrected by metaSPAdes) to each bin and deliver a FASTQ file with the reads. This reads are going to be used by SPAdes to assemble the MAGs. It will also give you a taxonomic assignation for each bin. 
+This script will use bowtie2, samtools and bamtools to map the reads (corrected by metaSPAdes) to each bin and deliver a FASTQ file with the reads. This reads are going to be used by SPAdes to assemble the MAGs. It will also give you a taxonomic assignation for the contigs of each bin. 
 
 ```bash
 qsub runReassembly_sample01.sh
@@ -178,14 +207,50 @@ Once it is finished you can erase the SAM file:
 ```bash
 rm MAP_REASSEMBLY/FILE/*.sam 
 ```
-In the `SPADES_MAGS/` folder you will have the assembled MAGs scaffolds and a folder for each MAG with all of the SPAdes outputs:
+In the `SPADES_MAGS/` folder you will have a folder for each MAG with all of the SPAdes outputs:
 ```bash
+171799.fna/
+    assembly_graph.fastg
+    assembly_graph.gfa
+    before_rr.fasta
+    contigs.fasta
+    contigs.paths
+    corrected/
+    dataset.info
+    input_dataset.yaml
+    K21/
+    K33/
+    K55/
+    K77/
+    misc/
+    params.txt
+    scaffolds.fasta
+    scaffolds.paths
+    spades.log
+    tmp/
+    warnings.log
 
 ```
+The scaffolds FASTA files will also be in the folder called `MAGS/`.
 
-In the `TAXONOMY_MAGS/` folder you will have the Kraken and Bracken reports with the taxonomy
+In the `TAXONOMY_MAGS/` folder you will have the Kraken and Bracken reports with the taxonomy.
 ```bash
-
+171479.fna.bracken
+171479.fna-kraken_bracken.report
+171479.fna-kraken.kraken
+171479.fna-kraken.report
+171530.fna.bracken
+171530.fna-kraken_bracken.report
+171530.fna-kraken.kraken
+171530.fna-kraken.report
+171732.fna.bracken
+171732.fna-kraken_bracken.report
+171732.fna-kraken.kraken
+171732.fna-kraken.report
+171799.fna.bracken
+171799.fna-kraken_bracken.report
+171799.fna-kraken.kraken
+171799.fna-kraken.report
 ```
 
 # Running CheckM on the MAGs 
@@ -196,6 +261,14 @@ qsub runCheckm_sample01.sh
 ```
 The result you want is a table that is diplayed in the output log `LOGS/checkm_sample01.output`. It should look something like this: 
 ```bash
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Bin Id                    Marker lineage      # genomes   # markers   # marker sets   0     1    2   3   4   5+   Completeness   Contamination   Strain heterogeneity  
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  171732.fna.scaffolds    k__Archaea (UID2)        207         145           103        36   102   7   0   0   0       75.42            3.62              14.29          
+  171799.fna.scaffolds   k__Bacteria (UID203)      5449        104            58        96    6    2   0   0   0       12.93            2.59              100.00         
+  171530.fna.scaffolds   k__Bacteria (UID203)      5449        104            58        84    3    6   3   2   6       10.33           20.88              21.35          
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 ```
 
