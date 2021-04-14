@@ -15,7 +15,7 @@ And paste inside it the following code:
 FILE1=$1 # Forward reads, a fastq.gz file
 FILE2=$2 # Reverse reads, a fastq.gz file
 prefix=$3 # Sample ID, it will be appended to the beginning of the files
-root=$(pwd) # Your working directory must be the one where you have the required files and wherer the outputs will be created  
+root=$(pwd) # Your working directory must be the one where you have the required files and where the outputs will be created  
 sign='$'
 
 cat > runMetaspades_${prefix}.sh <<EOF
