@@ -58,55 +58,28 @@ rm $prefix.sam
 E0F1
 
 
-cat > runReassembly_${prefix}.sh << E0F2 
+cat > runTaxonomy_${prefix}.sh << E0F2 
 
-#PBS -N reassembly_${prefix}
+#PBS -N taxonomy_${prefix}
 #PBS -q default
 #PBS -l nodes=1:ppn=8,mem=32g,vmem=32g,walltime=100:00:00
-#PBS -e $root/LOGS/reassembly_${prefix}.error
-#PBS -o $root/LOGS/reassembly_${prefix}.output
+#PBS -e $root/LOGS/taxonomy_${prefix}.error
+#PBS -o $root/LOGS/taxonomy_${prefix}.output
 #PBS -V
 
-module load bowtie2/2.3.5.1
-module load samtools/1.9
-module load bwa/0.7.15
-module load bamtools/2.4.1
-module load SPAdes/3.10.1
 module load kraken/2.0.7
 module load Braken/2.0
 
 cd $root
 
-mkdir MAP_REASSEMBLY
-mkdir MAP_REASSEMBLY/INDEX
-mkdir MAP_REASSEMBLY/FILE
 mkdir TAXONOMY_MAGS
-
 
 ls VAMB/*.fna | while read line; do file=${sign}(echo ${sign}line | cut -d'/' -f
 2);
-forw=${sign}(echo $FILE1| cut -d'.' -f1); rev=${sign}(echo $FILE2| cut -d'.' -f1
-);
-
 kraken2 --db kraken-db --threads 12 -input ${sign}line --output TAXONOMY_MAGS/${
-sign}file-kraken.kraken --report TAXONOMY_MAGS/${sign}file-kraken.report;
-bracken -d kraken-db -i TAXONOMY_MAGS/${sign}file-kraken.report -o TAXONOMY_MAGS
-/${sign}file.bracken; 
-
-bowtie2-build ${sign}line MAP_REASSEMBLY/INDEX/${sign}file; 
-bowtie2 --threads 12 --sensitive-local -x  MAP_REASSEMBLY/INDEX/${sign}file -1 M
-ETASPADES/corrected/${sign}forw* -2 METASPADES/corrected/${sign}rev* -S  MAP_REA
-SSEMBLY/FILE/${sign}file.sam;
-samtools view -F 4 -bS  MAP_REASSEMBLY/FILE/${sign}file.sam >  MAP_REASSEMBLY/FI
-LE/${sign}file.bam; 
-bamtools convert -in MAP_REASSEMBLY/FILE/${sign}file.bam -format fastq >  MAP_RE
-ASSEMBLY/FILE/${sign}file.fastq;
-
-mkdir SPADES_MAGS/${sign}file;
-mkdir MAGS/;
-spades.py -s MAP_REASSEMBLY/FILE/${sign}file.fastq -o SPADES_MAGS/${sign}file;
-scp SPADES_MAGS/${sign}file/scaffolds.fasta MAGS/${sign}file.scaffolds.fasta 2>>
-/dev/null; done
+sign}file_kraken.kraken --report TAXONOMY_MAGS/${sign}file_kraken.report;
+bracken -d kraken-db -i TAXONOMY_MAGS/${sign}file_kraken.report -o TAXONOMY_MAGS
+/${sign}file.bracken; done
 
 E0F2
 
@@ -115,7 +88,7 @@ cat > runCheckm_${prefix}.sh << E0F3
 #PBS -q default
 #PBS -l nodes=1:ppn=8,mem=48g,vmem=48g,walltime=100:00:00
 #PBS -e $root/LOGS/checkm_${prefix}.error
-#PBS -o $root/CHECKM/checkm_${prefix}.output
+#PBS -o $root/LOGS/checkm_${prefix}.output
 #PBS -V
 
 module load CheckM/1.1.3
@@ -125,6 +98,7 @@ module load Prodigal/2.6.2
 cd $root/
 mkdir CHECKM
 checkm lineage_wf -x fasta -r MAGS/ CHECKM/
+checkm qa CHECKM/lineage.ms CHECKM/ --file CHECKM/quality_${prefix}.tsv --tab_table -o 2
 
 E0F3
 ```
@@ -137,7 +111,7 @@ This created our 4 scripts:
 runCheckm_sample01.sh
 runMetaspades_sample01.sh
 runMinimap_sample01.sh
-runReassembly_sample01.sh
+runTaxonomy_sample01.sh
 ```
 And now we will run them in order with a lot of waiting in the middle. 
 
@@ -197,79 +171,39 @@ It will take a while.
 Your bins will be in `sample01/bins/` and will have names like this: `171479.fna`, `171530.fna`
 Now create a folder called `VAMB/` in your working directory in the cluster and copy your bins there (the `fna` files, not the `bins/` folder)
 
-# Extracting the reads for each bin, reassembling them and performing a taxonomic assignation
-This script will use bowtie2, samtools and bamtools to map the reads (corrected by metaSPAdes) to each bin and deliver a FASTQ file with the reads. This reads are going to be used by SPAdes to assemble the MAGs. It will also give you a taxonomic assignation for the contigs of each bin. 
+# Taxonomic assignation 
+This script will give you a taxonomic assignation for the contigs of each bin. 
 
 ```bash
-qsub runReassembly_sample01.sh
+qsub runTaxonomy_sample01.sh
 ```
-Once it is finished you can erase the SAM file:
-```bash
-rm MAP_REASSEMBLY/FILE/*.sam 
-```
-In the `SPADES_MAGS/` folder you will have a folder for each MAG with all of the SPAdes outputs:
-```bash
-171799.fna/
-    assembly_graph.fastg
-    assembly_graph.gfa
-    before_rr.fasta
-    contigs.fasta
-    contigs.paths
-    corrected/
-    dataset.info
-    input_dataset.yaml
-    K21/
-    K33/
-    K55/
-    K77/
-    misc/
-    params.txt
-    scaffolds.fasta
-    scaffolds.paths
-    spades.log
-    tmp/
-    warnings.log
-
-```
-The scaffolds FASTA files will also be in the folder called `MAGS/`.
-
 In the `TAXONOMY_MAGS/` folder you will have the Kraken and Bracken reports with the taxonomy.
 ```bash
 171479.fna.bracken
-171479.fna-kraken_bracken.report
-171479.fna-kraken.kraken
+171479.fna_kraken_bracken.report
+171479.fna_kraken.kraken
 171479.fna-kraken.report
 171530.fna.bracken
-171530.fna-kraken_bracken.report
-171530.fna-kraken.kraken
-171530.fna-kraken.report
+171530.fna_kraken_bracken.report
+171530.fna_kraken.kraken
+171530.fna_kraken.report
 171732.fna.bracken
-171732.fna-kraken_bracken.report
-171732.fna-kraken.kraken
-171732.fna-kraken.report
+171732.fna_kraken_bracken.report
+171732.fna_kraken.kraken
+171732.fna_kraken.report
 171799.fna.bracken
-171799.fna-kraken_bracken.report
-171799.fna-kraken.kraken
-171799.fna-kraken.report
+171799.fna_kraken_bracken.report
+171799.fna_kraken.kraken
+171799.fna_kraken.report
 ```
 
 # Running CheckM on the MAGs 
-This script will run the lineage workflow of CheckM, that will give you an estimate for the completeness, the contamination and the heterogeneity of your MAGs.
+This script will run the lineage workflow of CheckM, that will give you an estimate for the completeness, the contamination and the heterogeneity of your MAGs, and other statistics like genome size and GC %.
 
 ```bash
 qsub runCheckm_sample01.sh
 ```
-The result you want is a table that is diplayed in the output log `LOGS/checkm_sample01.output`. It should look something like this: 
-```bash
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Bin Id                    Marker lineage      # genomes   # markers   # marker sets   0     1    2   3   4   5+   Completeness   Contamination   Strain heterogeneity  
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  171732.fna.scaffolds    k__Archaea (UID2)        207         145           103        36   102   7   0   0   0       75.42            3.62              14.29          
-  171799.fna.scaffolds   k__Bacteria (UID203)      5449        104            58        96    6    2   0   0   0       12.93            2.59              100.00         
-  171530.fna.scaffolds   k__Bacteria (UID203)      5449        104            58        84    3    6   3   2   6       10.33           20.88              21.35          
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+The results are in the `CHECKM/quality_sample01.tsv`file. 
 
-
-```
 
 # You finished!
