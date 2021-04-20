@@ -117,7 +117,7 @@ This script will run the assembly of the metagenome (the output will be in the `
 ```bash
 qsub runMetaspades_sample01.sh
 ```
-Now ypu should have all of this in your sample folder:
+Now you should have all of this in your sample folder:
 ```bash
 LOGS/
     metaspades_sample01.output
@@ -156,16 +156,34 @@ This script will perform the alignment of the reads to the assembled metagenome.
 ```bash
 qsub runMinimap_sample01.sh
 ```
-Once it is finished you have to move the BAM file and the scaffolds file from the cluster to the same folder in your local computar to run VAMB (unless your cluser can run VAMB). It will take a while. 
+Once it is finished you have to move the BAM file and the scaffolds file from the cluster to a folder in your local computer to run VAMB (unless your cluser can run VAMB). It will take a while. 
 
 # Running VAMB in the local computer
+I installed VAMB using Conda and the version I used is 3.0.2.
 Once you have the BAM and the scaffolds in your local computer run:
 
 ```bash
 vamb --outdir sample01/ --fasta sample01_scaffolds.fasta --bamfiles sample01.bam --minfasta 200000
 ```
+With the `--outdir` flag you specify the name of the folder where it is going to put the output. With the `--fasta` and `--bamfiles` flags you give the program the assembly and the mapping files. The `--minfasta` option is to tell the program to give you FASTA files of the bins that are at least 200,000 bases long, if you don't use this options VAMB will wive you information about the bins it identified but not the bins themselves. 
 It will take a while.
-Your bins will be in `sample01/bins/` and will have names like this: `171479.fna`, `171530.fna`
+
+You will have an output like this: 
+```bash
+sample01/
+    bins/
+        145.fna
+        62132.fna
+    clusters.tsv
+    latent.npz
+    lengths.npz
+    log.txt
+    mask.npz
+    model.pt
+    rpkm.npz
+    tnf.npz
+```
+Your bins are the `145.fna`, `62132.fna` files (`.fna` is an extension equivalent to `.fasta`).
 Now create a folder called `VAMB/` in your working directory in the cluster and copy your bins there (the `fna` files, not the `bins/` folder)
 
 # Taxonomic assignation 
@@ -176,22 +194,14 @@ qsub runTaxonomy_sample01.sh
 ```
 In the `TAXONOMY_MAGS/` folder you will have the Kraken and Bracken reports with the taxonomy.
 ```bash
-171479.fna.bracken
-171479.fna_kraken_bracken.report
-171479.fna_kraken.kraken
-171479.fna-kraken.report
-171530.fna.bracken
-171530.fna_kraken_bracken.report
-171530.fna_kraken.kraken
-171530.fna_kraken.report
-171732.fna.bracken
-171732.fna_kraken_bracken.report
-171732.fna_kraken.kraken
-171732.fna_kraken.report
-171799.fna.bracken
-171799.fna_kraken_bracken.report
-171799.fna_kraken.kraken
-171799.fna_kraken.report
+145.fna.bracken
+145.fna_kraken_bracken.report
+145.fna_kraken.kraken
+145.fna-kraken.report
+62132.fna.bracken
+62132.fna_kraken_bracken.report
+62132.fna_kraken.kraken
+62132.fna_kraken.report
 ```
 
 # Running CheckM on the MAGs 
