@@ -58,7 +58,7 @@ rm $prefix.sam
 E0F1
 
 
-cat > runTaxonomy_${prefix}.sh << E0F2 
+cat > runTaxonomy_${prefix}.sh <<E0F2 
 
 #PBS -N taxonomy_${prefix}
 #PBS -q default
@@ -74,16 +74,13 @@ cd $root
 
 mkdir TAXONOMY_MAGS
 
-ls VAMB/*.fna | while read line; do file=${sign}(echo ${sign}line | cut -d'/' -f
-2);
-kraken2 --db kraken-db --threads 12 -input ${sign}line --output TAXONOMY_MAGS/${
-sign}file_kraken.kraken --report TAXONOMY_MAGS/${sign}file_kraken.report;
-bracken -d kraken-db -i TAXONOMY_MAGS/${sign}file_kraken.report -o TAXONOMY_MAGS
-/${sign}file.bracken; done
+ls VAMB/*.fna | while read line; do file=${sign}(echo ${sign}line | cut -d'/' -f2);
+kraken2 --db kraken-db --threads 12 -input ${sign}line --output TAXONOMY_MAGS/${sign}file_kraken.kraken --report TAXONOMY_MAGS/${sign}file_kraken.report;
+bracken -d kraken-db -i TAXONOMY_MAGS/${sign}file_kraken.report -o TAXONOMY_MAGS/${sign}file.bracken; done
 
 E0F2
 
-cat > runCheckm_${prefix}.sh << E0F3
+cat > runCheckm_${prefix}.sh <<E0F3
 #PBS -N runCheckm_${prefix}
 #PBS -q default
 #PBS -l nodes=1:ppn=8,mem=48g,vmem=48g,walltime=100:00:00
