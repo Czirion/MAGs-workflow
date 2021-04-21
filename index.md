@@ -94,7 +94,7 @@ module load Prodigal/2.6.2
 
 cd $root/
 mkdir CHECKM
-checkm lineage_wf -x fasta -r MAGS/ CHECKM/
+checkm lineage_wf -x fasta -r VAMB/ CHECKM/
 checkm qa CHECKM/lineage.ms CHECKM/ --file CHECKM/quality_${prefix}.tsv --tab_table -o 2
 
 E0F3
