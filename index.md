@@ -75,8 +75,8 @@ cd $root
 mkdir TAXONOMY_MAGS
 
 ls VAMB/*.fna | while read line; do file=${sign}(echo ${sign}line | cut -d'/' -f2);
-kraken2 --db kraken-db --threads 12 -input ${sign}line --output TAXONOMY_MAGS/${sign}file_kraken.kraken --report TAXONOMY_MAGS/${sign}file_kraken.report;
-bracken -d kraken-db -i TAXONOMY_MAGS/${sign}file_kraken.report -o TAXONOMY_MAGS/${sign}file.bracken; done
+kraken2 --db kraken-db --threads 12 -input ${sign}line --output TAXONOMY_MAGS/${sign}file-kraken.kraken --report TAXONOMY_MAGS/${sign}file-kraken.report;
+bracken -d kraken-db -i TAXONOMY_MAGS/${sign}file-kraken.report -o TAXONOMY_MAGS/${sign}file.bracken; done
 
 E0F2
 
@@ -94,7 +94,7 @@ module load Prodigal/2.6.2
 
 cd $root/
 mkdir CHECKM
-checkm lineage_wf -x fasta -r VAMB/ CHECKM/
+checkm lineage_wf -r VAMB/ CHECKM/
 checkm qa CHECKM/lineage.ms CHECKM/ --file CHECKM/quality_${prefix}.tsv --tab_table -o 2
 
 E0F3
