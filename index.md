@@ -165,7 +165,7 @@ Once you have the BAM and the scaffolds in your local computer run:
 ```bash
 vamb --outdir sample01/ --fasta sample01_scaffolds.fasta --bamfiles sample01.bam --minfasta 200000
 ```
-With the `--outdir` flag you specify the name of the folder where it is going to put the output. With the `--fasta` and `--bamfiles` flags you give the program the assembly and the mapping files. The `--minfasta` option is to tell the program to give you FASTA files of the bins that are at least 200,000 bases long, if you don't use this options VAMB will wive you information about the bins it identified but not the bins themselves. 
+With the `--outdir` flag you specify the name of the folder where it is going to put the output. With the `--fasta` and `--bamfiles` flags you give the program the assembly and the mapping files. The `--minfasta` option is to tell the program to give you FASTA files of the bins that are at least 200,000 bases long, if you don't use this options VAMB will give you information about the bins it identified but not the bins themselves. 
 It will take a while.
 
 You will have an output like this: 
