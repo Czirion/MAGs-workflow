@@ -75,7 +75,7 @@ cd $root
 mkdir TAXONOMY_MAGS
 
 ls VAMB/*.fna | while read line; do file=${sign}(echo ${sign}line | cut -d'/' -f2);
-kraken2 --db kraken-db --threads 12 -input ${sign}line --output TAXONOMY_MAGS/${sign}file-kraken.kraken --report TAXONOMY_MAGS/${sign}file-kraken.report;
+kraken2 --db kraken-db --threads 8 -input ${sign}line --output TAXONOMY_MAGS/${sign}file-kraken.kraken --report TAXONOMY_MAGS/${sign}file-kraken.report;
 bracken -d kraken-db -i TAXONOMY_MAGS/${sign}file-kraken.report -o TAXONOMY_MAGS/${sign}file.bracken; done
 
 E0F2
